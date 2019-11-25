@@ -11,11 +11,19 @@
     "start": "parcel src/index.html",
     "build-prod": "parcel build src/index.html"
   },
-  "dependencies": {},
+  "dependencies": {
+    "babylonjs": "^4.0.3",
+    "dat.gui": "^0.7.6",
+    "pepjs": "^0.5.2",
+    "stats-js": "^1.0.1"
+  },
   "devDependencies": {
-    "parcel-bundler": "^1.12.4",
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
-    "eslint": "^6.7.1"
+    "@babylonjs/core": "^4.0.3",
+    "@babylonjs/materials": "^4.0.3",
+    "eslint": "^6.7.1",
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.23.7"
   }
 }
