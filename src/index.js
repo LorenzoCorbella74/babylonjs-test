@@ -24,8 +24,8 @@ function initGame () {
         .animate()
 }
 
-if (module.hot) {
+/* if (module.hot) {
     module.hot.accept(function accept () {
         initGame()
     })
-}
+} */

@@ -39,7 +39,7 @@ export default class Game {
         this.createStats();
 
         // camera
-        const cameraPos = new Vector3(0, 5, -10)
+        const cameraPos = new Vector3(0, 7.5, -15)
         this.camera = new FreeCamera('maincam', cameraPos, this.scene)
         this.camera.setTarget(Vector3.Zero())
         this.camera.attachControl(this.canvas, false)
@@ -81,6 +81,18 @@ export default class Game {
             // }
         }) */
 
+        this.step = 0;
+        this.scene.registerBeforeRender(() => {
+
+            this.actor.position.y = Math.cos(this.step) * 1+2
+            this.step += 0.075;
+
+            //update stats
+            this.statsFPS.update();
+            // this.statsMemory.update();
+
+        });
+
         return this;
     }
 
@@ -89,31 +101,33 @@ export default class Game {
         this.statsFPS = new Stats();
         this.statsFPS.domElement.style.cssText = "position:absolute;top:3px;left:3px;";
         this.statsFPS.showPanel(0); // 0: fps,
-        //memory stats
-        // this.statsMemory = new Stats();
-        // this.statsMemory.showPanel(2); //2: mb, 1: ms, 3+: custom
-        // this.statsMemory.domElement.style.cssText = "position:absolute;top:3px;left:84px;";
         //add stats for FPS and Memory usage
         document.body.appendChild(this.statsFPS.dom);
-        // document.body.appendChild(this.statsMemory.dom);
     }
 
     createDatGUI () {
         this.gui = new dat.GUI({ name: "My GUI" });
-        let fields = this.gui.addFolder("Field");
-        fields.add(this.myMaterial, "wireframe").listen();
-        fields.open();
+        let engine = this.gui.addFolder("Engine");
+        engine.add(this.myMaterial, "wireframe").listen();
+        this.gui.add(this, "stop");
+        this.gui.add(this, "restart");
+        engine.open();
     }
 
     animate () {
-        this.engine.runRenderLoop(() => {
+        this.scene.executeWhenReady(() => {
+            this.engine.runRenderLoop(() => {
+                this.scene.render();
+            })
+            return this;
+        });
+    }
 
-            this.scene.render();
+    stop () {
+        this.engine.stopRenderLoop();
+    }
 
-            //update stats
-            this.statsFPS.update();
-            // this.statsMemory.update();
-        })
-        return this;
+    restart () {
+        this.animate();
     }
 }
