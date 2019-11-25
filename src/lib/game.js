@@ -1,7 +1,5 @@
-
-
 // Tutto in una volta
-import { Engine, FreeCamera, HemisphericLight, MeshBuilder, Scene, Vector3 } from 'babylonjs';
+import { Engine, FreeCamera, HemisphericLight, MeshBuilder, Scene, Vector3, Color3, StandardMaterial } from 'babylonjs';
 
 // a pezzi
 /* import { Engine } from "@babylonjs/core/Engines/engine";
@@ -17,12 +15,6 @@ import "@babylonjs/core/Meshes/meshBuilder"; */
 import Stats from "stats-js";
 import * as dat from "dat.gui";
 
-const globalDatOption = {
-    shouldAnimate: true,
-    field: "Enter a Text",
-    color: "#ffae23", // CSS string
-}
-
 export default class Game {
 
     constructor(canvas) {
@@ -33,25 +25,18 @@ export default class Game {
         this.camera = null
         this.light = null
 
-        this.state = { useWireFrame: false, shouldAnimate: false };
+        this.state = {
+            options: {
+                // TBD
+            },
+            current: 'test'
+        };
     }
 
     createScene () {
         this.scene = new Scene(this.engine)
 
-        //fps stats
-        this.statsFPS = new Stats();
-        this.statsFPS.domElement.style.cssText = "position:absolute;top:3px;left:3px;";
-        this.statsFPS.showPanel(0); // 0: fps,
-
-        //memory stats
-        this.statsMemory = new Stats();
-        this.statsMemory.showPanel(2); //2: mb, 1: ms, 3+: custom
-        this.statsMemory.domElement.style.cssText = "position:absolute;top:3px;left:84px;";
-
-        //add stats for FPS and Memory usage
-        document.body.appendChild(this.statsFPS.dom);
-        document.body.appendChild(this.statsMemory.dom);
+        this.createStats();
 
         // camera
         const cameraPos = new Vector3(0, 5, -10)
@@ -65,20 +50,23 @@ export default class Game {
 
         // Create a grid material
         // var gridMaterial = new GridMaterial("grid", this.scene);
+        this.myMaterial = new StandardMaterial("myMaterial", this.scene);
+        this.myMaterial.diffuseColor = new Color3(0.3, 0.4, 0.6);
+        this.myMaterial.wireframe = false;
 
         // ACTOR
         const sphereOpts = { segments: 16, diameter: 2 }
-        const sphere = MeshBuilder/* Mesh */.CreateSphere('mainsphere', sphereOpts, this.scene)
-        sphere.position.y = 1
-        // sphere.material = gridMaterial;
+        this.actor = MeshBuilder/* Mesh */.CreateSphere('mainsphere', sphereOpts, this.scene)
+        this.actor.position.y = 1;
+        this.actor.material = this.myMaterial;
 
         // GROUND
         const groundOpts = { width: 6, height: 6, subdividions: 2 }
         const ground = MeshBuilder/* Mesh */.CreateGround('mainground', groundOpts, this.scene);
-        // ground.material = gridMaterial;
+        ground.wireframe = false;
+        ground.material = this.myMaterial;
 
-        
-        this.addDatGUI(); // FIXME: Add DAT GUI after adding model
+        this.createDatGUI(); // FIXME: Add DAT GUI after adding model
 
         // the canvas/window resize event handler
         window.addEventListener('resize', () => {
@@ -86,22 +74,34 @@ export default class Game {
         });
 
         // KEYBOARD INPUTS
-        this.scene.onKeyboardObservable.add((info) => {
+        /* this.scene.onKeyboardObservable.add((info) => {
             console.log(info)
             // if(info.type === BABYLON.PointerEventTypes.POINTERWHEEL) {
             //   moveBall()
             // }
-        })
+        }) */
 
-        return this
+        return this;
     }
 
-    addDatGUI () {
-        this.gui = new dat.GUI({ name: "My GUI" });
+    createStats () {
+        //fps stats
+        this.statsFPS = new Stats();
+        this.statsFPS.domElement.style.cssText = "position:absolute;top:3px;left:3px;";
+        this.statsFPS.showPanel(0); // 0: fps,
+        //memory stats
+        // this.statsMemory = new Stats();
+        // this.statsMemory.showPanel(2); //2: mb, 1: ms, 3+: custom
+        // this.statsMemory.domElement.style.cssText = "position:absolute;top:3px;left:84px;";
+        //add stats for FPS and Memory usage
+        document.body.appendChild(this.statsFPS.dom);
+        // document.body.appendChild(this.statsMemory.dom);
+    }
 
+    createDatGUI () {
+        this.gui = new dat.GUI({ name: "My GUI" });
         let fields = this.gui.addFolder("Field");
-        fields.add(globalDatOption, "field");
-        fields.addColor(globalDatOption, "color");
+        fields.add(this.myMaterial, "wireframe").listen();
         fields.open();
     }
 
@@ -112,8 +112,8 @@ export default class Game {
 
             //update stats
             this.statsFPS.update();
-            this.statsMemory.update();
+            // this.statsMemory.update();
         })
-        return this
+        return this;
     }
 }
