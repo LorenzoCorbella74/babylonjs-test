@@ -1,5 +1,5 @@
 // Tutto in una volta
-import { Engine, FreeCamera, HemisphericLight, MeshBuilder, Scene, Vector3, Color3, StandardMaterial } from 'babylonjs';
+import { Engine, UniversalCamera, HemisphericLight, MeshBuilder, Scene, Vector3, Color3, StandardMaterial } from 'babylonjs';
 
 // a pezzi
 /* import { Engine } from "@babylonjs/core/Engines/engine";
@@ -39,14 +39,12 @@ export default class Game {
         this.createStats();
 
         // camera
-        const cameraPos = new Vector3(0, 7.5, -15)
-        this.camera = new FreeCamera('maincam', cameraPos, this.scene)
-        this.camera.setTarget(Vector3.Zero())
-        this.camera.attachControl(this.canvas, false)
+        this.camera = this.createCamera(this.scene, this.canvas);
 
         // Light
-        const lightPos = new Vector3(0, 1, 0)
+        const lightPos = new Vector3(0, 5, 0)
         this.light = new HemisphericLight('hemlight', lightPos, this.scene)
+        this.light.intensity = 0.95;
 
         // Create a grid material
         // var gridMaterial = new GridMaterial("grid", this.scene);
@@ -54,17 +52,24 @@ export default class Game {
         this.myMaterial.diffuseColor = new Color3(0.3, 0.4, 0.6);
         this.myMaterial.wireframe = false;
 
-        // ACTOR
+        // powerUp
         const sphereOpts = { segments: 16, diameter: 2 }
-        this.actor = MeshBuilder/* Mesh */.CreateSphere('mainsphere', sphereOpts, this.scene)
-        this.actor.position.y = 1;
-        this.actor.material = this.myMaterial;
+        this.powerUp = MeshBuilder/* Mesh */.CreateSphere('mainsphere', sphereOpts, this.scene)
+        this.powerUp.position.y = 1;
+        const powerMat = new StandardMaterial("powerMat", this.scene);
+        powerMat.diffuseColor = new Color3(0.7, 0.7, 0.7);
+        powerMat.alpha = 0.5;
+        powerMat.wireframe = false;
+        this.powerUp.material = powerMat;
+        this.powerUp.checkCollisions = true;
+        this.powerUp.collisionsEnabled = true;
 
         // GROUND
-        const groundOpts = { width: 6, height: 6, subdividions: 2 }
+        const groundOpts = { width: 60, height: 60, subdividions: 2 }
         const ground = MeshBuilder/* Mesh */.CreateGround('mainground', groundOpts, this.scene);
         ground.wireframe = false;
         ground.material = this.myMaterial;
+        ground.checkCollisions = true;
 
         this.createDatGUI(); // FIXME: Add DAT GUI after adding model
 
@@ -84,7 +89,7 @@ export default class Game {
         this.step = 0;
         this.scene.registerBeforeRender(() => {
 
-            this.actor.position.y = Math.cos(this.step) * 1+2
+            this.powerUp.position.y = Math.cos(this.step) * 2 + 2
             this.step += 0.075;
 
             //update stats
@@ -94,6 +99,29 @@ export default class Game {
         });
 
         return this;
+    }
+
+    createCamera (scene, canvas) {
+        const cameraPos = new Vector3(0, 7.5, -15);
+        let camera = new UniversalCamera('maincam', cameraPos, scene);
+        camera.setTarget(Vector3.Zero());
+        camera.attachControl(canvas, false);
+
+        // See more JavaScript KeyCodes here: https://keycode.info/
+        camera.keysUp.push(87);    // 87 corresponds to 'w'
+        camera.keysDown.push(83);  // 83 corresponds to 's'
+        camera.keysLeft.push(65);  // 65 corresponds to 'a'
+        camera.keysRight.push(68); // 68 corresponds to 'd'
+        camera.speed = 1;
+        camera.fov = 0.9;
+        camera.inertia = 0;
+        // create an ellipsoid around the camera (this will collide with other objects, such as the `sphere`. This makes it so we can't walk inside of the sphere)
+        camera.ellipsoid = new Vector3(1, 1.8, 1);
+        camera.checkCollisions = true;
+        // camera.applyGravity = true;
+        camera.collisionsEnabled = true;
+
+        return camera;
     }
 
     createStats () {
