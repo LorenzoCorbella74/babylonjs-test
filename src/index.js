@@ -1,8 +1,14 @@
 import "./styles.scss";
 
-import Game from './lib/game.js'
+import Game from './entities/game.js'
 
-window.addEventListener('DOMContentLoaded', initGame)
+window.addEventListener('DOMContentLoaded', () => {
+    const canvas = initCanvas()
+    const game = new Game(canvas)
+    game
+        .createScene()
+        .startLoop()
+})
 
 function removeExistingCanvas () {
     const els = document.body.children
@@ -15,17 +21,3 @@ function initCanvas () {
     document.body.appendChild(canvas)
     return canvas
 }
-
-function initGame () {
-    const canvas = initCanvas()
-    const game = new Game(canvas)
-    game
-        .createScene()
-        .animate()
-}
-
-/* if (module.hot) {
-    module.hot.accept(function accept () {
-        initGame()
-    })
-} */
