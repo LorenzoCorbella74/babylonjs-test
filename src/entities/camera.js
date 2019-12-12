@@ -24,7 +24,7 @@ export function createCamera (scene, canvas) {
     camera.checkCollisions = true;
     camera.applyGravity = true;
     camera.collisionsEnabled = true;
-    camera._needMoveForGravity = false;
+    camera._needMoveForGravity = true;
 
     return camera;
 }
