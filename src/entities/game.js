@@ -13,11 +13,12 @@ import { GridMaterial } from "@babylonjs/materials/grid";
 
 import "@babylonjs/core/Meshes/meshBuilder"; */
 
-import { createCamera } from './camera';
+
 import { createStats } from '../debug/stats';
 import { createDatGUI } from '../debug/datgui';
-
 import { KeyboardState } from './keyboard';
+import { Player } from './player';
+import { degToRad } from './helpers';
 
 
 export default class Game {
@@ -37,12 +38,9 @@ export default class Game {
 
         this.scene = new BABYLON.Scene(this.engine);
         this.scene.collisionsEnabled = true;
-        this.scene.gravity = new BABYLON.Vector3(0,0,0);
+        this.scene.gravity = new BABYLON.Vector3(0, -1, 0);
 
-        this.fakeGravity = -1;
-        this.isJumping = false;
-        this.sprint = 0;
-        this.speed = 2;
+
 
         this.statsFPS = createStats();
 
@@ -50,8 +48,7 @@ export default class Game {
 
         this.controlOnPointerDown();
 
-        // camera
-        this.camera = createCamera(this.scene, this.canvas);
+        this.player = new Player(this);
 
         // Light
         const lightPos = new BABYLON.Vector3(0, 5, 0)
@@ -86,7 +83,7 @@ export default class Game {
         ground.addTags("floor");
 
 
-        // rampa
+        // rampa estrusa
         const bodyMaterial = new BABYLON.StandardMaterial("texture_rampa", this.scene);
         bodyMaterial.diffuseColor = new BABYLON.Color3(1.0, 0.75, 0.75);
         bodyMaterial.backFaceCulling = false;
@@ -103,6 +100,16 @@ export default class Game {
         rampa.collisionsEnabled = true;
         BABYLON.Tags.EnableFor(rampa);
         rampa.addTags("floor");
+
+
+        const tiltedground = BABYLON.MeshBuilder/* Mesh */.CreateGround('tiltedground', { width: 10, height: 10, subdividions: 2 }, this.scene);
+        tiltedground.wireframe = false;
+        tiltedground.material = this.myMaterial;
+        tiltedground.checkCollisions = true;
+        tiltedground.position = new BABYLON.Vector3(-25,3.5,10);
+        tiltedground.rotation = new BABYLON.Vector3(-Math.PI/4,0,0);
+        BABYLON.Tags.EnableFor(tiltedground);
+        tiltedground.addTags("floor");
 
         // muri perimetrali
         const muroNord = BABYLON.MeshBuilder.CreateBox("muroNord", { height: 8, width: 60, depth: 0.25 }, this.scene);
@@ -125,27 +132,13 @@ export default class Game {
         muroOvest.material = bodyMaterial;
         muroOvest.checkCollisions = true;
 
-
-        /*         const scalino = BABYLON.MeshBuilder.CreateBox("scalino", { height: 0.2, width: 4, depth: 6 }, this.scene);
-                scalino.position = new BABYLON.Vector3(-15, 0.5, 0);
-                scalino.material = bodyMaterial;
-                scalino.checkCollisions = true;
-                BABYLON.Tags.EnableFor(scalino);
-                scalino.addTags("floor");
-        
-                const scalino2 = BABYLON.MeshBuilder.CreateBox("scalino2", { height: 0.2, width: 4, depth: 4 }, this.scene);
-                scalino2.position = new BABYLON.Vector3(-15, 0.3, 1);
-                scalino2.material = bodyMaterial;
-                scalino2.checkCollisions = true;
-                BABYLON.Tags.EnableFor(scalino2);
-                scalino2.addTags("floor"); */
-
-        const scalino3 = BABYLON.MeshBuilder.CreateBox("scalino3", { height: 0.2, width: 8, depth: 4 }, this.scene);
-        scalino3.position = new BABYLON.Vector3(-15, 0.1, 0);
-        scalino3.material = bodyMaterial;
-        scalino3.checkCollisions = true;
-        BABYLON.Tags.EnableFor(scalino3);
-        scalino3.addTags("floor");
+        // scalino
+        const scalino = BABYLON.MeshBuilder.CreateBox("scalino", { height: 0.4, width: 8, depth: 4 }, this.scene);
+        scalino.position = new BABYLON.Vector3(-15, 0.2, 0);
+        scalino.material = bodyMaterial;
+        scalino.checkCollisions = true;
+        BABYLON.Tags.EnableFor(scalino);
+        scalino.addTags("floor");
 
 
         createDatGUI(this); // FIXME: Add DAT GUI after adding model
@@ -155,18 +148,36 @@ export default class Game {
             this.engine.resize();
         });
 
+        window.addEventListener("mousemove", (evt) => {
+            if (this.scene.alreadyLocked) {
+                this.player.camera.playerBox.rotation.y += evt.movementX * 0.001 * (this.player.camera.angularSensibility / 250);
+                var nextRotationX = this.player.camera.playerBox.rotation.x + (evt.movementY * 0.001 * (this.player.camera.angularSensibility / 250));
+                if (nextRotationX < degToRad(90) && nextRotationX > degToRad(-90)) {
+                    this.player.camera.playerBox.rotation.x += evt.movementY * 0.001 * (this.player.camera.angularSensibility / 250);
+                }
+            }
+        }, false);
 
+
+        // canvas = this.game.scene.getEngine().getRenderingCanvas();
+        this.canvas.addEventListener("mousedown", (evt) => {
+            if (this.scene && this.scene.alreadyLocked && !this.isFiring) {
+                this.isFiring = true;
+            }
+        }, false);
+        this.canvas.addEventListener("mouseup", function (evt) {
+            if (this.scene && this.scene.alreadyLocked && this.isFiring) {
+                this.isFiring = false;
+            }
+        }, false);
 
         this.step = 0;
 
-
+        // registerBeforeRender funziona solo quando il soggetto è dentro la vista inquadrata dalla camera
         this.scene.registerBeforeRender(() => {
-
-
 
             this.powerUp.position.y = Math.cos(this.step) * 2 + 3
             this.step += 0.075;
-
 
         });
 
@@ -191,6 +202,8 @@ export default class Game {
                 this.canvas.removeEventListener("mousedown", this.player.shoot());
                 this.canvas.removeEventListener("keypress", this.player.move());
             } */
+
+
         }
 
         document.addEventListener("pointerlockchange", pointerLockListener.bind(this));
@@ -212,7 +225,8 @@ export default class Game {
 
     updateDt () {
         this.dt = this.engine.getDeltaTime();
-        // console.log(this.dt);
+        this.ratio = Math.round(1000 / this.engine.getDeltaTime()) / 60;
+        // console.log(this.dt, this.ratio);
     }
 
     startLoop () {
@@ -221,24 +235,7 @@ export default class Game {
             // renders the scene 60 fps.
             this.engine.runRenderLoop(() => {
 
-                
-
-
-
-                this.camera.speed = this.speed + this.sprint;   // la camera si muove in base alla velocità e allo spunto
-
-                // wj tiene conto se stiamo sul ground principale
-                this.camera.onCollide = (colMesh) => {
-                    let floors = this.scene.getMeshesByTags("floor");
-                    for (let i = 0; i < floors.length; i++) {
-                        const floor = floors[i];
-                        if (colMesh.uniqueId === floor.uniqueId) {
-                            this.isJumping = false;
-                            this.camera.speed -= this.sprint;
-                            break;
-                        }
-                    }
-                }
+                this.updateDt();
 
                 if (this.keyboard.pressed('p')) {
                     if (this.game.state === 'RUNNING') {
@@ -249,27 +246,11 @@ export default class Game {
                 }
 
 
-                // finchè è maggiore di una soglia si decrementa
-                if (this.fakeGravity > -1) {
-                    this.fakeGravity -= 0.025;
-                }
-
-                
-                // console.log(this.fakeGravity);
-                this.scene.gravity.y = this.fakeGravity;
-
                 this.keyboard.update();
-                //this.keyboard.debug();
+                // this.keyboard.debug();
 
-                if (this.keyboard.pressed('space')) {
-                    if (this.isJumping == false) {
-                        this.fakeGravity = 0.6;     // imposta un valore per la gravità positivo
-                        this.isJumping = true;     // non compenetra il ground
-                        this.sprint += 0.05;   // lo spazio fa aumentare lo spunto (sprint!!)
-                    }
-                }
+                this.player.update(this.ratio)
 
-                this.updateDt();
                 this.statsFPS.update();
 
                 if (this.game.state !== 'PAUSE') {
