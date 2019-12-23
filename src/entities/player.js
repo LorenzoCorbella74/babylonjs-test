@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs';
 
 import { createFreeCamera, createFollowCamera } from './camera';
-import { degToRad } from './helpers';
+import { degToRad } from '../core/helpers';
 
 export class Player {
 
@@ -115,8 +115,6 @@ export class Player {
 
         // gravità ???
         this.camera.playerBox.moveWithCollisions(new BABYLON.Vector3(0, (-0.25) * relativeSpeed, 0));
-
-
     }
 
 }

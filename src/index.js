@@ -1,6 +1,6 @@
 import "./styles.scss";
 
-import Game from './entities/game.js'
+import Game from './game.js'
 
 window.addEventListener('DOMContentLoaded', () => {
     const canvas = initCanvas()
