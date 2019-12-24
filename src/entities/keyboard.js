@@ -17,8 +17,8 @@
 // initialization
 export class KeyboardState {
 
-    constructor(domElement) {
-        this.domElement = domElement || document;
+    constructor(game) {
+        this.game = game;
         this.status = {};
         this.keys = {
             8: "backspace", 9: "tab", 13: "enter", 16: "shift",
@@ -30,6 +30,24 @@ export class KeyboardState {
         // bind keyEvents
         document.addEventListener("keydown", this.onKeyDown.bind(this), false);
         document.addEventListener("keyup", this.onKeyUp.bind(this), false);
+        this.game.canvas.addEventListener('mousedown', this.mouseDownEvent.bind(this));
+        this.game.canvas.addEventListener('mouseup', this.mouseUpEvent.bind(this));
+    }
+
+    mouseDownEvent(e) {
+        if (e.button == 0) {
+            this.mouseLeft = true
+        } else if (e.button == 2) {
+            this.mouseRight = true
+        }
+    }
+
+    mouseUpEvent(e) {
+        if (e.button == 0) {
+            this.mouseLeft = false;
+        } else if (e.button == 2) {
+            this.mouseRight = false;
+        }
     }
 
     keyName (keyCode) {

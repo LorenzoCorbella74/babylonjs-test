@@ -1,5 +1,6 @@
 import * as BABYLON from 'babylonjs';
 
+import { WeaponsInventory } from './weapons';
 import { createFreeCamera, createFollowCamera } from './camera';
 import { degToRad } from '../core/helpers';
 
@@ -29,6 +30,9 @@ export class Player {
 
         this.game.scene.activeCamera = this.camera;
 
+        this.weaponsInventory = new WeaponsInventory();
+        this.currentWeapon = this.weaponsInventory.selectedWeapon;		// arma corrente
+
         // wj tiene conto se stiamo sul ground principale
         this.camera.playerBox.onCollide = (colMesh) => {
             let floors = this.game.scene.getMeshesByTags("floor");
@@ -46,6 +50,41 @@ export class Player {
 
     switchCamera () {
         this.game.scene.activeCamera = this.game.scene.activeCamera === this.camera ? this.followCamera : this.camera;
+    }
+
+    hotKey (keyCode) {
+        if (keyCode == 48) {
+            keyCode = 58
+        }
+        if (keyCode - 49 in this.weaponsInventory.weapons) {
+            this.weaponsInventory.weapon = keyCode - 49;
+            // se disponibile si sceglie
+            if (this.weaponsInventory.weapons[this.weaponsInventory.weapon].available) {
+                this.weaponsInventory.selectedWeapon = this.weaponsInventory.weapons[this.weaponsInventory.weapon];
+                this.currentWeapon = this.weaponsInventory.selectedWeapon;		// arma corrente
+            }
+        }
+    }
+
+    wheel (delta) {
+        if (delta > 0) {
+            if (this.weaponsInventory.weapon <= 0) {
+                this.weaponsInventory.weapon = this.weaponsInventory.weapons.length - 1
+            } else {
+                this.weaponsInventory.weapon--;
+            }
+        } else {
+            if (this.weaponsInventory.weapon >= this.weaponsInventory.weapons.length - 1) {
+                this.weaponsInventory.weapon = 0
+            } else {
+                this.weaponsInventory.weapon++;
+            }
+        }
+        // se disponibile si sceglie
+        if (this.weaponsInventory.weapons[this.weaponsInventory.weapon].available) {
+            this.weaponsInventory.selectedWeapon = this.weaponsInventory.weapons[this.weaponsInventory.weapon];
+            this.currentWeapon = this.weaponsInventory.selectedWeapon;		// arma corrente
+        }
     }
 
     update (ratioFps) {
@@ -104,10 +143,10 @@ export class Player {
 
         if (this.camera.jumpNeed) {
             let percentMove = this.camera.jumpNeed - this.camera.playerBox.position.y;
-            let up = new BABYLON.Vector3(0,percentMove/5*  relativeSpeed,0);
+            let up = new BABYLON.Vector3(0, percentMove / 5 * relativeSpeed, 0);
             this.camera.playerBox.moveWithCollisions(up);
             // We check if the player has reached the desired height
-            if(this.camera.playerBox.position.y+2> this.camera.jumpNeed){
+            if (this.camera.playerBox.position.y + 2 > this.camera.jumpNeed) {
                 this.jumpDesire == false;
                 this.camera.jumpNeed = false;
             }

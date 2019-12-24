@@ -20,7 +20,7 @@ import { KeyboardState } from './entities/keyboard';
 import { Player } from './entities/player';
 import { degToRad } from './core/helpers';
 
-import {createMap} from './maps/dm1';
+import { createMap } from './maps/dm1';
 
 
 export default class Game {
@@ -31,7 +31,7 @@ export default class Game {
         this.dt = this.engine.getDeltaTime();
 
         this.game = {
-            state: 'DEV' // MENU, RUNNING, PAUSE, GAMEOVER, DEV 
+            state: 'DEV' // MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
         };
     }
 
@@ -47,7 +47,7 @@ export default class Game {
         this.keyboard = new KeyboardState(this);
         this.controlOnPointerDown();
 
-        
+
         this.powerUp = createMap(this)
 
 
@@ -57,29 +57,6 @@ export default class Game {
         window.addEventListener('resize', () => {
             this.engine.resize();
         });
-
-        window.addEventListener("mousemove", (evt) => {
-            if (this.scene.alreadyLocked) {
-                this.player.camera.playerBox.rotation.y += evt.movementX * 0.001 * (this.player.camera.angularSensibility / 250);
-                var nextRotationX = this.player.camera.playerBox.rotation.x + (evt.movementY * 0.001 * (this.player.camera.angularSensibility / 250));
-                if (nextRotationX < degToRad(90) && nextRotationX > degToRad(-90)) {
-                    this.player.camera.playerBox.rotation.x += evt.movementY * 0.001 * (this.player.camera.angularSensibility / 250);
-                }
-            }
-        }, false);
-
-
-        // canvas = this.game.scene.getEngine().getRenderingCanvas();
-        this.canvas.addEventListener("mousedown", (evt) => {
-            if (this.scene && this.scene.alreadyLocked && !this.isFiring) {
-                this.isFiring = true;
-            }
-        }, false);
-        this.canvas.addEventListener("mouseup", function (evt) {
-            if (this.scene && this.scene.alreadyLocked && this.isFiring) {
-                this.isFiring = false;
-            }
-        }, false);
 
         this.step = 0;
 
@@ -102,16 +79,23 @@ export default class Game {
                 this.canvas.requestPointerLock = this.canvas.requestPointerLock || this.canvas.msRequestPointerLock || this.canvas.mozRequestPointerLock || this.canvas.webkitRequestPointerLock;
                 this.canvas.requestPointerLock();
             } else {
-                console.log("We are already locked");
+                // console.log("We are already locked");
+                if (this.game.state !== 'PAUSED') {
+                    this.canvas.addEventListener('mousemove', this.mouseMoveEvent.bind(this));
+                    this.canvas.addEventListener('mousedown', this.mouseDownEvent.bind(this));
+                    this.canvas.addEventListener('mouseup', this.mouseUpEvent.bind(this));
+                    this.canvas.addEventListener('contextmenu', this.contextMenuEvent.bind(this))
+                    window.addEventListener('mousewheel', this.mouseWheelEvent.bind(this));
+                    window.addEventListener('DOMMouseScroll', this.mouseWheelEvent.bind(this));
+                } else if (this.game.state === 'PAUSED') {
+                    this.canvas.removeEventListener('mousemove', this.mouseMoveEvent.bind(this));
+                    this.canvas.removeEventListener("mousedown", this.mouseDownEvent.bind(this));
+                    this.canvas.removeEventListener("mouseup", this.mouseUpEvent.bind(this));
+                    this.canvas.removeEventListener('contextmenu', this.contextMenuEvent.bind(this));
+                    window.removeEventListener('mousewheel', this.mouseWheelEvent.bind(this));
+                    window.removeEventListener('DOMMouseScroll', this.mouseWheelEvent.bind(this));
+                }
             }
-            /* if (this.game.state !== 'PAUSE') {
-                this.canvas.addEventListener("mousedown", this.player.shoot());
-                this.canvas.addEventListener("keypress", this.player.move());
-            }
-            else if (this.game.state === 'PAUSE') {
-                this.canvas.removeEventListener("mousedown", this.player.shoot());
-                this.canvas.removeEventListener("keypress", this.player.move());
-            } */
         }
 
         document.addEventListener("pointerlockchange", pointerLockListener.bind(this));
@@ -125,10 +109,45 @@ export default class Game {
                 this.scene.alreadyLocked = true;
             } else {
                 this.scene.alreadyLocked = false;
-                /* this.canvas.removeEventListener("mousedown", this.player.shoot());
-                this.canvas.removeEventListener("keypress", this.player.move()); */
             }
         }
+    }
+
+    mouseDownEvent (e) {
+        if (e.button == 0) {
+            this.mouseLeft = true
+        } else if (e.button == 2) {
+            this.mouseRight = true
+        }
+    }
+
+    mouseUpEvent (e) {
+        if (e.button == 0) {
+            this.mouseLeft = false;
+        } else if (e.button == 2) {
+            this.mouseRight = false;
+        }
+    }
+
+    mouseMoveEvent (evt) {
+        if (this.scene.alreadyLocked) {
+            this.player.camera.playerBox.rotation.y += evt.movementX * 0.001 * (this.player.camera.angularSensibility / 250);
+            var nextRotationX = this.player.camera.playerBox.rotation.x + (evt.movementY * 0.001 * (this.player.camera.angularSensibility / 250));
+            if (nextRotationX < degToRad(90) && nextRotationX > degToRad(-90)) {
+                this.player.camera.playerBox.rotation.x += evt.movementY * 0.001 * (this.player.camera.angularSensibility / 250);
+            }
+        }
+    }
+
+    mouseWheelEvent (e) {
+        if (this.game.state == 'game') {
+            this.player.wheel(e.wheelDelta ? e.wheelDelta : -e.detail);
+            return true;
+        }
+    }
+
+    contextMenuEvent (e) {
+        e.preventDefault()
     }
 
     updateDt () {
@@ -147,28 +166,36 @@ export default class Game {
 
                 if (this.keyboard.pressed('p')) {
                     if (this.game.state === 'RUNNING') {
-                        this.game.state = 'PAUSE';
+                        this.game.state = 'PAUSED';
                     } else {
                         this.game.state = 'RUNNING';
                     }
                 }
 
-                if(this.keyboard.pressed('F')){
+                if (this.mouseLeft) {
+                    console.log('mouse left!');
+                }
+                if (this.mouseRight) {
+                    console.log('mouse right!');
+                }
+
+                /* if (this.keyboard.pressed('F')) {
                     setTimeout(() => {
                         this.player.switchCamera();
                     }, 350);
-                }
+                } */
 
                 this.keyboard.update();
                 // this.keyboard.debug();
 
                 this.player.update(this.ratio)
 
-                this.statsFPS.update();
 
-                if (this.game.state !== 'PAUSE') {
+                if (this.game.state !== 'PAUSED') {
                     this.scene.render();
                 }
+
+                this.statsFPS.update();
             })
             return this;
         });

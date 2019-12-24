@@ -30,10 +30,10 @@ export class ControlHandler {
         } else if ((e.keyCode >= 48 || e.keyCode <= 57) && this.game.state == 'game') {
             this.player.hotKey(e.keyCode)
         }
-        if (this.mouseX > 0 && this.mouseX < this.canvas.width && this.mouseY > 0 && this.mouseY < this.canvas.height) {
+        /* if (this.mouseX > 0 && this.mouseX < this.canvas.width && this.mouseY > 0 && this.mouseY < this.canvas.height) {
             e.preventDefault();
             return false
-        }
+        } */
     }
 
     keyUpEvent(e) {
@@ -59,18 +59,17 @@ export class ControlHandler {
                     this.game.loadPauseScreen(this.game);
                 }
             }
-        } else if (this.mouseX > 0 && this.mouseX < this.canvas.width && this.mouseY > 0 && this.mouseY < this.canvas.height) {
+        } /* else if (this.mouseX > 0 && this.mouseX < this.canvas.width && this.mouseY > 0 && this.mouseY < this.canvas.height) {
             e.preventDefault();
             return false
-        }
+        } */
     }
 
-    // permette di ciclare tra i bot
+    // TODO: permette di ciclare tra i bot
     followBot(back) {
         const botIndex = Helper.getBotsName(this.game.enemy.list.map(e => e.index));  // FIXME: è usato sia per i nomi che per l'index
         let currentActorInCamera = back ? this.player : this.game.enemy.list[botIndex];
-        this.game.camera.setCurrentPlayer(currentActorInCamera);
-        this.game.camera.adjustCamera(currentActorInCamera);
+        // this.game.camera.setCurrentPlayer(currentActorInCamera);
     }
 
     mouseDownEvent(e) {
@@ -83,17 +82,16 @@ export class ControlHandler {
 
     mouseUpEvent(e) {
         if (this.mouseLeft) {
-            if (this.game.state == 'menuScreen') {
+            /* if (this.game.state == 'menuScreen') {
                 // this.game.startGame();
                 console.log(e);
-
+            } */
+            if (this.game.state==='PAUSE') {
+                this.game.state = false;
             }
-            if (this.game.paused) {
-                this.game.paused = false;
-            }
-            if (this.game.state == 'statsScreen') {
+            /* if (this.game.state == 'statsScreen') {
                 this.game.startGame();
-            }
+            } */
         }
 
         if (e.button == 0) {
@@ -104,11 +102,11 @@ export class ControlHandler {
     }
 
     mouseMoveEvent(e) {
-        var rect = this.canvas.getBoundingClientRect();
-        this.mouseX = e.clientX - rect.left;    // tra 0 e 800
-        this.mouseY = e.clientY - rect.top;     // tra 0 e 600
-        // angolo tra il player e il mirino
-        this.player.angle = Helper.calculateAngle(this.player.x - this.camera.x, this.player.y - this.camera.y, this.mouseX, this.mouseY);
+        // var rect = this.canvas.getBoundingClientRect();
+        // this.mouseX = e.clientX - rect.left;    // tra 0 e 800
+        // this.mouseY = e.clientY - rect.top;     // tra 0 e 600
+        // // angolo tra il player e il mirino
+        // this.player.angle = Helper.calculateAngle(this.player.x - this.camera.x, this.player.y - this.camera.y, this.mouseX, this.mouseY);
     }
 
     mouseWheelEvent(e) {
