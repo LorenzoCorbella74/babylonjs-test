@@ -89,6 +89,12 @@ export class Player {
 
     update (ratioFps) {
 
+        if (this.game.controls.up('F')) {
+            setTimeout(() => {
+                this.switchCamera();
+            }, 100);
+        }
+
         if (this.game.controls.pressed('space')) {
             if (this.jumpDesire == false) {
                 this.jumpDesire = true;     // non compenetra il ground
@@ -154,6 +160,16 @@ export class Player {
 
         // gravità ???
         this.camera.playerBox.moveWithCollisions(new BABYLON.Vector3(0, (-0.25) * relativeSpeed, 0));
+
+        // FIRE
+        if (this.game.controls.mouseLeft) {
+            console.log('mouse left!');
+        }
+        if (this.game.controls.mouseRight) {
+            console.log('mouse right!');
+        }
+
+
     }
 
 }

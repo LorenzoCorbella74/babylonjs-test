@@ -13,15 +13,12 @@ import { GridMaterial } from "@babylonjs/materials/grid";
 
 import "@babylonjs/core/Meshes/meshBuilder"; */
 
-
 import { createStats } from './debug/stats';
 import { createDatGUI } from './debug/datgui';
 import { Controls } from './core/controls';
 import { Player } from './entities/player';
 
-
 import { createMap } from './maps/dm1';
-
 
 export default class Game {
 
@@ -93,18 +90,8 @@ export default class Game {
                     }
                 }
 
-                if (this.controls.mouseLeft) {
-                    console.log('mouse left!');
-                }
-                if (this.controls.mouseRight) {
-                    console.log('mouse right!');
-                }
 
-                /* if (this.controls.pressed('F')) {
-                    setTimeout(() => {
-                        this.player.switchCamera();
-                    }, 350);
-                } */
+
 
                 this.controls.update();
                 // this.controls.debug();
