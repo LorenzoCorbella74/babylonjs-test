@@ -89,7 +89,7 @@ export class Player {
 
     update (ratioFps) {
 
-        if (this.game.keyboard.pressed('space')) {
+        if (this.game.controls.pressed('space')) {
             if (this.jumpDesire == false) {
                 this.jumpDesire = true;     // non compenetra il ground
                 this.camera.jumpNeed = this.camera.playerBox.position.y + this.jumpHeight;
@@ -99,10 +99,10 @@ export class Player {
         // this.speed += this.sprint;   // la camera si muove in base alla velocità e allo spunto
 
         this.playerBox.movements = [
-            this.game.keyboard.pressed('W'),
-            this.game.keyboard.pressed('S'),
-            this.game.keyboard.pressed('A'),
-            this.game.keyboard.pressed('D')
+            this.game.controls.pressed('W'),
+            this.game.controls.pressed('S'),
+            this.game.controls.pressed('A'),
+            this.game.controls.pressed('D')
         ];
 
         let relativeSpeed = this.speed / ratioFps;
