@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs';
 
 import { WeaponsInventory } from './weapons';
-import { createFreeCamera, createFollowCamera } from './camera';
+import { createFreeCamera, createFollowCamera, animateCameraPosAndRot } from './camera';
 import { degToRad } from '../core/helpers';
 
 export class Player {
@@ -10,6 +10,16 @@ export class Player {
 
         this.game = game;
         this.playerBox = BABYLON.MeshBuilder.CreateBox("playerBox", { height: 2, width: 0.8, depth: 0.8 }, this.scene);
+
+        this.playerBox.enableEdgesRendering(); // https://doc.babylonjs.com/how_to/how_to_use_edgesrenderer
+        this.playerBox.edgesWidth = 4.0;
+        this.playerBox.edgesColor = new BABYLON.Color4(0.1, 1, 0.2);
+        // this.playerBox.disableEdgesRendering(); per disabilitare gli spigoli
+        const playerMat = new BABYLON.StandardMaterial("playerMat", game.scene);
+        playerMat.diffuseColor = new BABYLON.Color3(0.1, 1, 0.2);
+        playerMat.alpha = 0.65;
+        this.playerBox.material = playerMat;
+
         this.playerBox.position = new BABYLON.Vector3(0, 1, -15);
         this.playerBox.ellipsoid = new BABYLON.Vector3(0.8, 2, 0.8);
         this.playerBox.movements = [false, false, false, false];
@@ -51,6 +61,19 @@ export class Player {
     switchCamera () {
         this.game.scene.activeCamera = this.game.scene.activeCamera === this.camera ? this.followCamera : this.camera;
     }
+
+    changeView () {
+        animateCameraPosAndRot(
+            this.game.scene.activeCamera,
+            this.playerBox.position,
+            new BABYLON.Vector3(0, 20, -25),
+            this.playerBox.position,
+            new BABYLON.Vector3(0, 0, 0),
+            this.game.scene
+        );
+    }
+
+
 
     hotKey (keyCode) {
         if (keyCode == 48) {

@@ -28,6 +28,7 @@ export function createDatGUI (context) {
         .name("Speed")
         .listen();
     camera.add(context.player, "switchCamera").name("Switch camera");
+    camera.add(context.player, "changeView").name("Change View");
     camera.open();
 
 }

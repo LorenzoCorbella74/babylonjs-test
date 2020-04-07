@@ -18,7 +18,7 @@ export function createFreeCamera (scene, canvas) {
     // camera.minZ = 1.81;
     camera.angularSensibility = 500;
     // camera.speed = 2; // è il player che si muove e la camera che viene dietro....
-    
+
 
     // create an ellipsoid around the camera (this will collide with other objects)
     // camera.ellipsoid = new BABYLON.Vector3(1.2, 2, 1.2);
@@ -32,11 +32,55 @@ export function createFreeCamera (scene, canvas) {
 
 
 export function createFollowCamera (scene, target) {
-	var camera = new BABYLON.FollowCamera("tankFollowCamera", target.position, scene, target);
-	camera.radius = 18;             // how far from the object to follow
-	camera.heightOffset = 9;        // how high above the object to place the camera
-	camera.rotationOffset = 180;    // the viewing angle
-	camera.cameraAcceleration = .1; // how fast to move
-	camera.maxCameraSpeed = 2;      // speed limit
-	return camera;
+    var camera = new BABYLON.FollowCamera("tankFollowCamera", target.position, scene, target);
+    camera.radius = 18;             // how far from the object to follow
+    camera.heightOffset = 9;        // how high above the object to place the camera
+    camera.rotationOffset = 180;    // the viewing angle
+    camera.cameraAcceleration = .1; // how fast to move
+    camera.maxCameraSpeed = 2;      // speed limit
+    return camera;
+}
+
+export function animateCameraPosAndRot (
+    c/* : BABYLON.Camera */,
+    fromPos/* : BABYLON.Vector3 */,
+    toPos/* : BABYLON.Vector3 */,
+    fromTgt/* : BABYLON.Vector3 */,
+    toTgt/* : BABYLON.Vector3 */,
+    scene/* : BABYLON.Scene */
+) {
+    console.log("animation Camera");
+    var animCamPosition = new BABYLON.Animation(
+        "animCam",
+        "position",
+        60,
+        BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+    );
+
+    var keysPosition = [];
+    keysPosition.push({ frame: 0, value: fromPos});
+    keysPosition.push({ frame: 300, value: toPos});
+    animCamPosition.setKeys(keysPosition);
+
+    var animCamTgt = new BABYLON.Animation("animTgt", "target", 60, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+    var keysTgt = [];
+    keysTgt.push({ frame: 0, value: fromTgt});
+    keysTgt.push({ frame: 300, value: toTgt });
+    animCamTgt.setKeys(keysTgt);
+
+    // ease animation
+    let easingFunction = new BABYLON.CircleEase();
+    easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+    animCamPosition.setEasingFunction(easingFunction);
+    animCamTgt.setEasingFunction(easingFunction);
+
+    c.animations.push(animCamPosition);
+    c.animations.push(animCamTgt);
+    scene.beginAnimation(c, 0, 300, false, 1, () => {
+        console.log("finished animation Camera");
+        /* console.log(this.mainCamera.position);
+        console.log(this.mainCamera.target); */
+    });
 }
