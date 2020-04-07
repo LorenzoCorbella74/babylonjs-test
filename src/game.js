@@ -27,7 +27,7 @@ export default class Game {
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.dt = this.engine.getDeltaTime();
 
-        this.time = 1; // TODO:
+        this.ratio = 1; // TODO:
 
         this.game = {
             state: 'DEV' // MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
@@ -50,7 +50,7 @@ export default class Game {
         this.powerUp = createMap(this)
 
 
-        createDatGUI(this); // FIXME: Add DAT GUI after adding model
+        this.gui = createDatGUI(this); // FIXME: Add DAT GUI after adding model
 
         // the canvas/window resize event handler
         window.addEventListener('resize', () => {
@@ -62,9 +62,6 @@ export default class Game {
         // NOTES: registerBeforeRender funziona solo quando il soggetto è dentro la vista inquadrata dalla camera
         this.scene.registerBeforeRender(() => {
 
-            this.powerUp.position.y = Math.cos(this.step) * 2 + 3
-            this.step += 0.075;
-
         });
 
         return this;
@@ -72,7 +69,7 @@ export default class Game {
 
     updateDt () {
         this.dt = this.engine.getDeltaTime();
-        this.ratio = Math.round(1000 / this.engine.getDeltaTime()) / 60;
+        // this.ratio = Math.round(1000 / this.engine.getDeltaTime()) / 60;
         // console.log(this.dt, this.ratio);
     }
 
@@ -98,7 +95,8 @@ export default class Game {
                 this.controls.update();
                 // this.controls.debug();
 
-                this.player.update(this.ratio)
+                this.player.update(this.ratio);
+                this.powerUp.update(this.ratio);
 
 
                 if (this.game.state !== 'PAUSED') {

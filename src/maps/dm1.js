@@ -1,6 +1,8 @@
 import * as BABYLON from 'babylonjs';
 
 export function createMap(game){
+    
+    var step = 0;
 
     // Light
     const lightPos = new BABYLON.Vector3(0, 5, 0);
@@ -14,9 +16,9 @@ export function createMap(game){
     myMaterial.wireframe = false;
 
     // SPHERE
-    const sphereOpts = { segments: 16, diameter: 2 }
+    const sphereOpts = { segments: 16, diameter: 1 }
     const powerUp = BABYLON.MeshBuilder/* Mesh */.CreateSphere('mainsphere', sphereOpts, game.scene)
-    powerUp.position.y = 1;
+    powerUp.position = new BABYLON.Vector3(16,2,4);
     const powerMat = new BABYLON.StandardMaterial("powerMat", game.scene);
     powerMat.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7);
     powerMat.alpha = 0.5;
@@ -24,6 +26,13 @@ export function createMap(game){
     powerUp.material = powerMat;
     powerUp.checkCollisions = true;
     powerUp.collisionsEnabled = true;
+    powerUp.update = (ratio) => {
+        powerUp.position.y = Math.cos(step) * 2 + 2.5;
+        step += 0.05/ratio;
+    };
+    powerUp.onCollide = (colMesh) => {
+        console.log(colMesh);
+    };
 
     // GROUND
     const groundOpts = { width: 60, height: 60, subdividions: 2 }
