@@ -27,7 +27,7 @@ export default class Game {
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.dt = this.engine.getDeltaTime();
 
-        this.ratio = 1; // TODO:
+        this.ratio = 1; // TODO: indica il rapporto con cui l'engine renderizza
 
         this.game = {
             state: 'DEV' // MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
@@ -47,7 +47,7 @@ export default class Game {
         this.controls.controlOnPointerDown();
 
 
-        this.powerUp = createMap(this)
+        this.powerUp = createMap(this); // da spostare dentro una sua classe!!!!!
 
 
         this.gui = createDatGUI(this); // FIXME: Add DAT GUI after adding model
@@ -56,8 +56,6 @@ export default class Game {
         window.addEventListener('resize', () => {
             this.engine.resize();
         });
-
-        this.step = 0;
 
         // NOTES: registerBeforeRender funziona solo quando il soggetto è dentro la vista inquadrata dalla camera
         this.scene.registerBeforeRender(() => {
@@ -68,8 +66,10 @@ export default class Game {
     }
 
     updateDt () {
-        this.dt = this.engine.getDeltaTime();
+        this.dt = this.engine.getDeltaTime();   // questo è inutile in quanto può sempre essere recuperato con l'engine...
         // this.ratio = Math.round(1000 / this.engine.getDeltaTime()) / 60;
+        // se s.engine.getDeltaTime() restituisce 32 (cioè il doppio di quello che dovrebbe essere per avere 60FPS)
+        // allora il ratio sarà < 1 ed andrà ad aumentare la velocità per compensare il fatto che il frame è stato più lento
         // console.log(this.dt, this.ratio);
     }
 
@@ -88,9 +88,6 @@ export default class Game {
                         this.game.state = 'RUNNING';
                     }
                 }
-
-
-
 
                 this.controls.update();
                 // this.controls.debug();

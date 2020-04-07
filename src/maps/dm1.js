@@ -26,13 +26,38 @@ export function createMap(game){
     powerUp.material = powerMat;
     powerUp.checkCollisions = true;
     powerUp.collisionsEnabled = true;
+    powerUp.actionManager = new BABYLON.ActionManager(game.scene);
+    /* powerUp.actionManager.registerAction(
+        new BABYLON.SetValueAction(
+            {
+                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                parameter: game.player.playerBox
+            },
+            powerUp,
+            'scaling',
+            new BABYLON.Vector3(3, 3, 3)
+        )
+    ); */
+    powerUp.actionManager.registerAction(
+        new BABYLON.ExecuteCodeAction(
+            {
+                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                parameter: game.player.playerBox
+            },
+            function(event) {
+                console.log("Touching: ", event.additionalData.id);
+            }
+            /* 
+                Vedere come specificare una condition function 
+                Source: https://doc.babylonjs.com/how_to/how_to_use_actions
+            */
+        )
+    );
     powerUp.update = (ratio) => {
         powerUp.position.y = Math.cos(step) * 2 + 2.5;
         step += 0.05/ratio;
     };
-    powerUp.onCollide = (colMesh) => {
-        console.log(colMesh);
-    };
+
 
     // GROUND
     const groundOpts = { width: 60, height: 60, subdividions: 2 }
