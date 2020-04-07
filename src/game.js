@@ -27,6 +27,8 @@ export default class Game {
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.dt = this.engine.getDeltaTime();
 
+        this.time = 1; // TODO:
+
         this.game = {
             state: 'DEV' // MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
         };

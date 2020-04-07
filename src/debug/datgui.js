@@ -8,6 +8,7 @@ export function createDatGUI (context) {
     let engine = gui.addFolder("Engine");
     gui.add(context, "stop").name("Stop Loop");
     gui.add(context, "restart").name("Restart Loop");
+    gui.add(context, "time", 0.1, 10)
     engine.open();
 
     let camera = gui.addFolder("Camera");
@@ -27,8 +28,7 @@ export function createDatGUI (context) {
         .add(context.player, "speed", 0.2, 1)
         .name("Speed")
         .listen();
-    camera.add(context.player, "switchCamera").name("Switch camera");
-    camera.add(context.player, "changeView").name("Change View");
+    camera.add(context.player, "switchCamera").name("Third person");
     camera.open();
 
 }

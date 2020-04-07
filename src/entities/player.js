@@ -32,13 +32,14 @@ export class Player {
         // camera
         this.camera = createFreeCamera(game.scene, game.canvas);
         this.followCamera = createFollowCamera(game.scene, this.playerBox);
-        this.camera.setTarget(BABYLON.Vector3.Zero());
+        this.camera.setTarget(BABYLON.Vector3.Zero());  // decidere dove far guardare all'inizio...
         this.camera.parent = this.playerBox;
         this.camera.playerBox = this.playerBox;
         this.camera.playerBox.checkCollisions = true;
         this.camera.playerBox.applyGravity = true;
 
         this.game.scene.activeCamera = this.camera;
+        this.isThirdPersonCamera = false;
 
         this.weaponsInventory = new WeaponsInventory();
         this.currentWeapon = this.weaponsInventory.selectedWeapon;		// arma corrente
@@ -59,20 +60,31 @@ export class Player {
     }
 
     switchCamera () {
-        this.game.scene.activeCamera = this.game.scene.activeCamera === this.camera ? this.followCamera : this.camera;
-    }
+        // nel caso siano telecamere diverse si può switchare così
+        // this.game.scene.activeCamera = this.game.scene.activeCamera === this.camera ? this.followCamera : this.camera;
+        let current = this.camera.position.clone();
+        if (!this.isThirdPersonCamera) {
+            animateCameraPosAndRot(
+                this.game.scene.activeCamera,
+                current,
+                new BABYLON.Vector3(current.x, current.y + 5, current.z - 15),
+                this.camera.position,
+                this.camera.position,
+                this.game.scene
+            );
+        } else {
+            animateCameraPosAndRot(
+                this.game.scene.activeCamera,
+                current,
+                new BABYLON.Vector3(current.x, current.y - 5, current.z + 15),
+                this.camera.position,
+                this.camera.position,
+                this.game.scene
+            );
+        }
+        this.isThirdPersonCamera = !this.isThirdPersonCamera;
 
-    changeView () {
-        animateCameraPosAndRot(
-            this.game.scene.activeCamera,
-            this.playerBox.position,
-            new BABYLON.Vector3(0, 20, -25),
-            this.playerBox.position,
-            new BABYLON.Vector3(0, 0, 0),
-            this.game.scene
-        );
     }
-
 
 
     hotKey (keyCode) {

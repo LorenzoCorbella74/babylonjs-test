@@ -60,14 +60,14 @@ export function animateCameraPosAndRot (
 
     var keysPosition = [];
     keysPosition.push({ frame: 0, value: fromPos});
-    keysPosition.push({ frame: 300, value: toPos});
+    keysPosition.push({ frame: 150, value: toPos});
     animCamPosition.setKeys(keysPosition);
 
     var animCamTgt = new BABYLON.Animation("animTgt", "target", 60, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
     var keysTgt = [];
     keysTgt.push({ frame: 0, value: fromTgt});
-    keysTgt.push({ frame: 300, value: toTgt });
+    keysTgt.push({ frame: 150, value: toTgt });
     animCamTgt.setKeys(keysTgt);
 
     // ease animation
@@ -78,7 +78,7 @@ export function animateCameraPosAndRot (
 
     c.animations.push(animCamPosition);
     c.animations.push(animCamTgt);
-    scene.beginAnimation(c, 0, 300, false, 1, () => {
+    scene.beginAnimation(c, 0, 150, false, 1, () => {
         console.log("finished animation Camera");
         /* console.log(this.mainCamera.position);
         console.log(this.mainCamera.target); */
