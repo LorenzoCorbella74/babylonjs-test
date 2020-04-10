@@ -3,38 +3,42 @@ import * as BABYLON from 'babylonjs';
 import { WeaponsInventory } from './weapons';
 import { createFreeCamera, createFollowCamera, animateCameraPosAndRot } from './camera';
 import { degToRad } from '../core/helpers';
+import GameObject from './gameObject.js';
 
-export class Player {
+export default class Player extends GameObject {
 
     constructor(game) {
 
-        this.game = game;
-        this.playerBox = BABYLON.MeshBuilder.CreateBox("playerBox", { height: 2, width: 0.8, depth: 0.8 }, this.scene);
+        super('player', game);
 
-        this.playerBox.enableEdgesRendering(); // https://doc.babylonjs.com/how_to/how_to_use_edgesrenderer
-        this.playerBox.edgesWidth = 4.0;
-        this.playerBox.edgesColor = new BABYLON.Color4(0.1, 1, 0.2);
-        // this.playerBox.disableEdgesRendering(); per disabilitare gli spigoli
+        const playerBox = BABYLON.VertexData.CreateBox("playerBox", { height: 2, width: 0.8, depth: 0.8 }, this.scene);
+        playerBox.applyToMesh(this);
+  
+        this.enableEdgesRendering(); // https://doc.babylonjs.com/how_to/how_to_use_edgesrenderer
+        this.edgesWidth = 4.0;
+        this.edgesColor = new BABYLON.Color4(0.1, 1, 0.2);
+        // this.disableEdgesRendering(); per disabilitare gli spigoli
+
         const playerMat = new BABYLON.StandardMaterial("playerMat", game.scene);
         playerMat.diffuseColor = new BABYLON.Color3(0.1, 1, 0.2);
         playerMat.alpha = 0.65;
-        this.playerBox.material = playerMat;
+        this.material = playerMat;
 
-        this.playerBox.position = new BABYLON.Vector3(0, 1, -15);
-        this.playerBox.ellipsoid = new BABYLON.Vector3(0.8, 2, 0.8);
-        this.playerBox.movements = [false, false, false, false];
+        this.position = new BABYLON.Vector3(0, 1, -15);
+        this.ellipsoid = new BABYLON.Vector3(0.8, 2, 0.8);
+        this.movements = [false, false, false, false];
 
         this.jumpDesire = false;
         this.jumpHeight = 4;
         /* this.sprint = 0; */
-        this.speed = 0.5;   // Mettere un default value !
+        this.speed = 0.25;   // Mettere un default value !
 
         // camera
         this.camera = createFreeCamera(game.scene, game.canvas);
-        this.followCamera = createFollowCamera(game.scene, this.playerBox);
+        this.followCamera = createFollowCamera(game.scene, this);
         this.camera.setTarget(BABYLON.Vector3.Zero());  // decidere dove far guardare all'inizio...
-        this.camera.parent = this.playerBox;
-        this.camera.playerBox = this.playerBox;
+        this.camera.parent = this;
+        this.camera.playerBox = this;
         this.camera.playerBox.checkCollisions = true;
         this.camera.playerBox.applyGravity = true;
 
@@ -139,7 +143,7 @@ export class Player {
         }
         // this.speed += this.sprint;   // la camera si muove in base alla velocità e allo spunto
 
-        this.playerBox.movements = [
+        this.movements = [
             this.game.controls.pressed('W'),
             this.game.controls.pressed('S'),
             this.game.controls.pressed('A'),
@@ -148,7 +152,7 @@ export class Player {
 
         let relativeSpeed = this.speed / ratioFps;
 
-        if (this.playerBox.movements[0]) {
+        if (this.movements[0]) {
             let forward = new BABYLON.Vector3(
                 parseFloat(Math.sin(parseFloat(this.camera.playerBox.rotation.y))) * relativeSpeed,
                 0,
@@ -156,7 +160,7 @@ export class Player {
             );
             this.camera.playerBox.moveWithCollisions(forward);
         }
-        if (this.playerBox.movements[1]) {
+        if (this.movements[1]) {
             let backward = new BABYLON.Vector3(
                 parseFloat(-Math.sin(parseFloat(this.camera.playerBox.rotation.y))) * relativeSpeed,
                 0,
@@ -164,7 +168,7 @@ export class Player {
             );
             this.camera.playerBox.moveWithCollisions(backward);
         }
-        if (this.playerBox.movements[2]) {
+        if (this.movements[2]) {
             let left = new BABYLON.Vector3(
                 parseFloat(Math.sin(parseFloat(this.camera.playerBox.rotation.y) + degToRad(-90))) * relativeSpeed,
                 0,
@@ -172,7 +176,7 @@ export class Player {
             );
             this.camera.playerBox.moveWithCollisions(left);
         }
-        if (this.playerBox.movements[3]) {
+        if (this.movements[3]) {
             let right = new BABYLON.Vector3(
                 parseFloat(-Math.sin(parseFloat(this.camera.playerBox.rotation.y) + degToRad(-90))) * relativeSpeed,
                 0,

@@ -9,6 +9,7 @@ export function createDatGUI (context) {
     gui.add(context, "stop").name("Stop Loop");
     gui.add(context, "restart").name("Restart Loop");
     gui.add(context, "ratio", 0.5, 5).name("Game speed ratio")
+    gui.add(context, "showBoundingBox").name("Bounding Boxes")
     engine.open();
 
     let camera = gui.addFolder("Camera");

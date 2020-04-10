@@ -16,9 +16,13 @@ import "@babylonjs/core/Meshes/meshBuilder"; */
 import { createStats } from './debug/stats';
 import { createDatGUI } from './debug/datgui';
 import { Controls } from './core/controls';
-import { Player } from './entities/player';
 
+// MAP
 import { createMap } from './maps/dm1';
+
+// ENTITIES
+import Player from './entities/player';
+// import PowerUp from './entities/powerup';
 
 export default class Game {
 
@@ -27,12 +31,16 @@ export default class Game {
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.dt = this.engine.getDeltaTime();
 
-        this.ratio = 1; // TODO: indica il rapporto con cui l'engine renderizza
+        // DEBUG:
+        this.ratio = 1;         // indica il rapporto con cui l'engine renderizza
+        this.showBoundingBoxEnable = true;    
 
         this.game = {
             state: 'DEV' // MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
         };
     }
+
+
 
     createScene () {
 
@@ -46,9 +54,9 @@ export default class Game {
         this.controls = new Controls(this);
         this.controls.controlOnPointerDown();
 
+        createMap(this);
 
-        this.powerUp = createMap(this); // da spostare dentro una sua classe!!!!!
-
+        // this.powerUp = new PowerUp(this);
 
         this.gui = createDatGUI(this); // FIXME: Add DAT GUI after adding model
 
@@ -79,7 +87,7 @@ export default class Game {
             // renders the scene 60 fps.
             this.engine.runRenderLoop(() => {
 
-                this.updateDt();
+                // this.updateDt();
 
                 if (this.controls.pressed('p')) {
                     if (this.game.state === 'RUNNING') {
@@ -93,7 +101,7 @@ export default class Game {
                 // this.controls.debug();
 
                 this.player.update(this.ratio);
-                this.powerUp.update(this.ratio);
+                // this.powerUp.update(this.ratio);
 
 
                 if (this.game.state !== 'PAUSED') {
@@ -106,6 +114,15 @@ export default class Game {
         });
     }
 
+    /* ---------------- debug ---------------- */
+
+    showBoundingBox () {
+        this.showBoundingBoxEnable = !this.showBoundingBoxEnable;
+        this.scene.meshes.forEach(m => {
+            m.showBoundingBox = this.showBoundingBoxEnable
+        });
+    }
+
     stop () {
         this.engine.stopRenderLoop();
     }
@@ -113,4 +130,5 @@ export default class Game {
     restart () {
         this.startLoop();
     }
+    /* ---------------- debug ---------------- */
 }
