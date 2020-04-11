@@ -18,7 +18,7 @@ export function createDatGUI (context) {
         .name("FOV")
         .listen();
     camera
-        .add(context.player.camera, "angularSensibility", 200, 600)
+        .add(context.player.camera, "angularSensibility", 100, 400)
         .name("Angular Sensibility")
         .listen();
    /*  camera

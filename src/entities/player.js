@@ -188,7 +188,7 @@ export default class Player extends GameObject {
 
         if (this.camera.jumpNeed) {
             let percentMove = this.camera.jumpNeed - this.camera.playerBox.position.y;
-            let up = new BABYLON.Vector3(0, percentMove / 5 * relativeSpeed, 0);
+            let up = new BABYLON.Vector3(0, percentMove / 3 * relativeSpeed, 0);
             this.camera.playerBox.moveWithCollisions(up);
             // We check if the player has reached the desired height
             if (this.camera.playerBox.position.y + 2 > this.camera.jumpNeed) {
@@ -198,7 +198,7 @@ export default class Player extends GameObject {
         }
 
         // gravità ???
-        this.camera.playerBox.moveWithCollisions(new BABYLON.Vector3(0, (-0.25) * relativeSpeed, 0));
+        this.camera.playerBox.moveWithCollisions(new BABYLON.Vector3(0, (-0.35) * relativeSpeed, 0));
 
         // FIRE
         if (this.game.controls.mouseLeft) {

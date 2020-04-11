@@ -14,9 +14,9 @@ export function createFreeCamera (scene, canvas) {
     // camera.keysRight.push(68); // 68 corresponds to 'd'
 
     camera.inertia = 0.2;
-    camera.fov = 0.9;
+    camera.fov = 0.8;
     // camera.minZ = 1.81;
-    camera.angularSensibility = 500;
+    camera.angularSensibility = 250;
     // camera.speed = 2; // è il player che si muove e la camera che viene dietro....
 
 

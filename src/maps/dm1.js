@@ -22,11 +22,12 @@ export function createMap(game){
     ground.addTags("floor");
     ground.showBoundingBox = game.showBoundingBox;
 
-    /* ------------------------ rampa estrusa ------------------------ */
     const wallMaterial = new BABYLON.StandardMaterial("texture_rampa", game.scene);
     wallMaterial.diffuseColor = new BABYLON.Color3(0.75, 0.75, 0.75);
     wallMaterial.backFaceCulling = false;
-    const side = [new BABYLON.Vector3(-4, 2, -2),
+
+    /* ------------------------ rampa estrusa ------------------------ */
+    /* const side = [new BABYLON.Vector3(-4, 2, -2),
     new BABYLON.Vector3(10, 2, -2),
     new BABYLON.Vector3(10, -2, -2),
     new BABYLON.Vector3(-12, -2, -2)
@@ -39,7 +40,7 @@ export function createMap(game){
     rampa.collisionsEnabled = true;
     BABYLON.Tags.EnableFor(rampa);
     rampa.addTags("floor");
-    rampa.showBoundingBox = true
+    rampa.showBoundingBox = true */
     /* ------------------------ rampa estrusa ------------------------ */
 
     const tiltedground = BABYLON.MeshBuilder/* Mesh */.CreateGround('tiltedground', { width: 10, height: 10, subdividions: 2 }, game.scene);

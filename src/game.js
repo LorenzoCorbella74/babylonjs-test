@@ -22,22 +22,22 @@ import { createMap } from './maps/dm1';
 
 // ENTITIES
 import Player from './entities/player';
-// import PowerUp from './entities/powerup';
+import PowerUp from './entities/powerup';
 
 export default class Game {
 
     constructor(canvas) {
         this.canvas = canvas
         this.engine = new BABYLON.Engine(this.canvas, true);
-        this.dt = this.engine.getDeltaTime();
+        // this.dt = this.engine.getDeltaTime();
 
         // DEBUG:
         this.ratio = 1;         // indica il rapporto con cui l'engine renderizza
         this.showBoundingBoxEnable = true;    
 
-        this.game = {
-            state: 'DEV' // MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
-        };
+        // stato del gioco: può essere MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
+        this.state = 'DEV' 
+        
     }
 
 
@@ -56,7 +56,7 @@ export default class Game {
 
         createMap(this);
 
-        // this.powerUp = new PowerUp(this);
+        this.powerUp = new PowerUp(this);
 
         this.gui = createDatGUI(this); // FIXME: Add DAT GUI after adding model
 
@@ -90,10 +90,10 @@ export default class Game {
                 // this.updateDt();
 
                 if (this.controls.pressed('p')) {
-                    if (this.game.state === 'RUNNING') {
-                        this.game.state = 'PAUSED';
+                    if (this.state === 'RUNNING') {
+                        this.state = 'PAUSED';
                     } else {
-                        this.game.state = 'RUNNING';
+                        this.state = 'RUNNING';
                     }
                 }
 
@@ -101,10 +101,9 @@ export default class Game {
                 // this.controls.debug();
 
                 this.player.update(this.ratio);
-                // this.powerUp.update(this.ratio);
+                this.powerUp.update(this.ratio);
 
-
-                if (this.game.state !== 'PAUSED') {
+                if (this.state !== 'PAUSED') {
                     this.scene.render();
                 }
 

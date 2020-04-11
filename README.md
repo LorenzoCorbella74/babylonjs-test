@@ -1,6 +1,6 @@
-# empty-project
+# Babylon test
 
-Empty project.
+My first step in 3d game development.
 
 ## Building and running on localhost
 
@@ -19,16 +19,7 @@ npm start
 To create a production build:
 
 ```sh
-npm run build-prod
+npm run prod
 ```
 
-## Running
-
-```sh
-node dist/bundle.js
-```
-
-## Credits
-
-Made with [createapp.dev](https://createapp.dev/)
 
