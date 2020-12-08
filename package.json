@@ -3,12 +3,15 @@
   "version": "0.0.1",
   "description": "First step in 3d game development",
   "main": "index.js",
-  "keywords": ["babylonjs","First person shooter"],
+  "keywords": [
+    "babylonjs",
+    "First person shooter"
+  ],
   "author": "Lorenzo Corbella",
   "license": "ISC",
   "scripts": {
     "clean": "rm dist/bundle.js",
-    "start": "parcel src/index.html",
+    "start": "parcel src/index.html --open",
     "prod": "parcel build src/index.html"
   },
   "dependencies": {

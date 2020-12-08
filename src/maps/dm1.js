@@ -1,6 +1,6 @@
 import * as BABYLON from 'babylonjs';
 
-export function createMap(game){
+export function createMap(game) {
 
     // Light
     const lightPos = new BABYLON.Vector3(0, 5, 0);
@@ -47,8 +47,8 @@ export function createMap(game){
     tiltedground.wireframe = false;
     tiltedground.material = groundMaterial;
     tiltedground.checkCollisions = true;
-    tiltedground.position = new BABYLON.Vector3(-25,3.5,10);
-    tiltedground.rotation = new BABYLON.Vector3(-Math.PI/4,0,0);
+    tiltedground.position = new BABYLON.Vector3(-25, 3.5, 10);
+    tiltedground.rotation = new BABYLON.Vector3(-Math.PI / 4, 0, 0);
     BABYLON.Tags.EnableFor(tiltedground);
     tiltedground.addTags("floor");
     tiltedground.showBoundingBox = true
@@ -79,7 +79,7 @@ export function createMap(game){
     muroOvest.showBoundingBox = true
 
     // scalino
-    const scalino = BABYLON.MeshBuilder.CreateBox("scalino", { height: 0.4, width: 8, depth: 4 }, game.scene);
+    const scalino = BABYLON.MeshBuilder.CreateBox("scalino", { height: 0.6, width: 8, depth: 4 }, game.scene);
     scalino.position = new BABYLON.Vector3(-15, 0.2, 0);
     scalino.material = wallMaterial;
     scalino.checkCollisions = true;

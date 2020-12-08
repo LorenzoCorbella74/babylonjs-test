@@ -9,18 +9,17 @@ export default class PowerUp extends GameObject {
 
     this.step = 0;
 
-    const sphereOpts = { segments: 16, diameter: 1 }
+    const sphereOpts = { segments: 16, diameter: 1.25 }
     const vertexData = BABYLON.VertexData.CreateSphere(sphereOpts)
     // const vertexData = BABYLON.VertexData.CreateBox({ size:1 });
     vertexData.applyToMesh(this);
     this.showBoundingBox = true;
-    this.position = new BABYLON.Vector3(5,0,0);
-
+    this.position = new BABYLON.Vector3(5, 0, 0);
 
     const material = new BABYLON.StandardMaterial('cubeMaterial', game.scene);
     material.emissiveColor = new BABYLON.Color3(0.7, 0, 0.5);
-    material.specularColor = new BABYLON.Color3(0, 1, 0); 
-    material.diffuseColor = new BABYLON.Color3(0.5, 0.5, 1); 
+    material.specularColor = new BABYLON.Color3(0, 1, 0);
+    material.diffuseColor = new BABYLON.Color3(0.5, 0.75, 1);
     // material.alpha = 0.5;
     material.wireframe = false;
     this.material = material;
@@ -29,25 +28,19 @@ export default class PowerUp extends GameObject {
     this.collisionsEnabled = true;
 
     this.actionManager = new BABYLON.ActionManager(game.scene);
-    /* this.actionManager.registerAction(
-        new BABYLON.SetValueAction(
-            {
-                trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                parameter: game.player
-            },
-            this,
-            'scaling',
-            new BABYLON.Vector3(3, 3, 3)
-        )
-    ); */
     this.actionManager.registerAction(
       new BABYLON.ExecuteCodeAction(
         {
           trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
           parameter: game.player
         },
-        function (event) {
+        (event) => {
           console.log("Touching: ", event.additionalData.id);
+          // create particles
+          this.setEnabled(false)
+          setTimeout(() => {
+            this.restart()
+          }, 10000)
         }
         /* 
             Vedere come specificare una condition function 
@@ -55,8 +48,6 @@ export default class PowerUp extends GameObject {
         */
       )
     );
-
-    
 
     /* 
       Example of BABYLON animation: al momento non è possibile rendere l'animazione con il "ratio dinamico"
@@ -75,10 +66,18 @@ export default class PowerUp extends GameObject {
     */
   }
 
-  update (ratio) {
-    this.position.y = Math.cos(this.step) * 0.5 + 1;
+  restart() {
+    this.setEnabled(true)
+    this.material.alpha = 0;
+  }
+
+  update(ratio) {
+    if (this.material.alpha < 1) {
+      this.material.alpha += 0.025 / ratio;
+    }
+    this.position.y = Math.cos(this.step) * 0.5 + 1.5;
     this.rotation.y = Math.sin(this.step) * 0.5
-    this.step += 0.15 / ratio;
+    this.step += 0.08 / ratio;
   }
 
 }

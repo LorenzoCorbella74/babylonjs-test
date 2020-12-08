@@ -13,7 +13,7 @@ export default class Player extends GameObject {
 
         const playerBox = BABYLON.VertexData.CreateBox("playerBox", { height: 2, width: 0.8, depth: 0.8 }, this.scene);
         playerBox.applyToMesh(this);
-  
+
         this.enableEdgesRendering(); // https://doc.babylonjs.com/how_to/how_to_use_edgesrenderer
         this.edgesWidth = 4.0;
         this.edgesColor = new BABYLON.Color4(0.1, 1, 0.2);
@@ -29,7 +29,7 @@ export default class Player extends GameObject {
         this.movements = [false, false, false, false];
 
         this.jumpDesire = false;
-        this.jumpHeight = 4;
+        this.jumpHeight = 5;
         /* this.sprint = 0; */
         this.speed = 0.25;   // Mettere un default value !
 
@@ -63,7 +63,7 @@ export default class Player extends GameObject {
         }
     }
 
-    switchCamera () {
+    switchCamera() {
         // nel caso siano telecamere diverse si può switchare così
         // this.game.scene.activeCamera = this.game.scene.activeCamera === this.camera ? this.followCamera : this.camera;
         let current = this.camera.position.clone();
@@ -91,7 +91,7 @@ export default class Player extends GameObject {
     }
 
 
-    hotKey (keyCode) {
+    hotKey(keyCode) {
         if (keyCode == 48) {
             keyCode = 58
         }
@@ -105,7 +105,7 @@ export default class Player extends GameObject {
         }
     }
 
-    wheel (delta) {
+    wheel(delta) {
         if (delta > 0) {
             if (this.weaponsInventory.weapon <= 0) {
                 this.weaponsInventory.weapon = this.weaponsInventory.weapons.length - 1
@@ -126,7 +126,7 @@ export default class Player extends GameObject {
         }
     }
 
-    update (ratioFps) {
+    update(ratioFps) {
 
         if (this.game.controls.up('F')) {
             setTimeout(() => {
@@ -207,8 +207,5 @@ export default class Player extends GameObject {
         if (this.game.controls.mouseRight) {
             console.log('mouse right!');
         }
-
-
     }
-
 }
