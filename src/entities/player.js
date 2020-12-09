@@ -24,7 +24,7 @@ export default class Player extends GameObject {
         playerMat.alpha = 0.65;
         this.material = playerMat;
 
-        this.position = new BABYLON.Vector3(0, 1, -15);
+        this.position = new BABYLON.Vector3(0, 1, -10);
         this.ellipsoid = new BABYLON.Vector3(0.8, 2, 0.8);
         this.movements = [false, false, false, false];
 

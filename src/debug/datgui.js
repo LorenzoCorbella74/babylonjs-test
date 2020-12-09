@@ -8,7 +8,7 @@ export function createDatGUI (context) {
     let engine = gui.addFolder("Engine");
     gui.add(context, "stop").name("Stop Loop");
     gui.add(context, "restart").name("Restart Loop");
-    gui.add(context, "ratio", 0.5, 5).name("Game speed ratio")
+    gui.add(context, "ratio", 0.5, 2).name("Game speed ratio")
     gui.add(context, "showBoundingBox").name("Bounding Boxes")
     engine.open();
 
@@ -26,7 +26,7 @@ export function createDatGUI (context) {
         .name("Inerzia")
         .listen(); */
     camera
-        .add(context.player, "speed", 0.2, 1)
+        .add(context.player, "speed", 0.2, 0.5)
         .name("Player Speed")
         .listen();
     camera.add(context.player, "switchCamera").name("Third person");
