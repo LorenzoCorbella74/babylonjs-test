@@ -31,7 +31,7 @@ export default class Player extends GameObject {
         this.jumpDesire = false;
         this.jumpHeight = 5;
         /* this.sprint = 0; */
-        this.speed = 0.25;   // Mettere un default value !
+        this.speed = 0.2;   // Mettere un default value !
 
         // camera
         this.camera = createFreeCamera(game.scene, game.canvas);
@@ -198,7 +198,7 @@ export default class Player extends GameObject {
         }
 
         // gravità ???
-        this.camera.playerBox.moveWithCollisions(new BABYLON.Vector3(0, (-0.35) * relativeSpeed, 0));
+        this.camera.playerBox.moveWithCollisions(new BABYLON.Vector3(0, (-0.5) * relativeSpeed, 0));
 
         // FIRE
         if (this.game.controls.mouseLeft) {

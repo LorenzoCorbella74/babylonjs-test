@@ -40,7 +40,7 @@ export default class PowerUp extends GameObject {
           this.setEnabled(false)
           setTimeout(() => {
             this.restart()
-          }, 10000)
+          }, 10000) // TODO: costante?
         }
         /* 
             Vedere come specificare una condition function 
@@ -73,7 +73,7 @@ export default class PowerUp extends GameObject {
 
   update(ratio) {
     if (this.material.alpha < 1) {
-      this.material.alpha += 0.025 / ratio;
+      this.material.alpha += 0.0125 / ratio; // TODO: costante?
     }
     this.position.y = Math.cos(this.step) * 0.5 + 1.5;
     this.rotation.y = Math.sin(this.step) * 0.5
