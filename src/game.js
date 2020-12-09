@@ -29,21 +29,16 @@ export default class Game {
     constructor(canvas) {
         this.canvas = canvas
         this.engine = new BABYLON.Engine(this.canvas, true);
-        // this.dt = this.engine.getDeltaTime();
 
         // DEBUG:
         this.ratio = 1;         // indica il rapporto con cui l'engine renderizza
-        this.showBoundingBoxEnable = true;    
+        this.showBoundingBoxEnable = true;
 
         // stato del gioco: può essere MENU, RUNNING, PAUSED, STATS, GAMEOVER, DEV 
-        this.state = 'DEV' 
-        
+        this.state = 'DEV'
     }
 
-
-
-    createScene () {
-
+    createScene() {
         this.scene = new BABYLON.Scene(this.engine);
         this.scene.collisionsEnabled = true;
         this.scene.gravity = new BABYLON.Vector3(0, -1, 0);
@@ -74,7 +69,7 @@ export default class Game {
         return this;
     }
 
-    updateDt () {
+    updateDt() {
         this.dt = this.engine.getDeltaTime();   // questo è inutile in quanto può sempre essere recuperato con l'engine...
         // this.ratio = Math.round(1000 / this.engine.getDeltaTime()) / 60;
         // se s.engine.getDeltaTime() restituisce 32 (cioè il doppio di quello che dovrebbe essere per avere 60FPS)
@@ -82,13 +77,11 @@ export default class Game {
         // console.log(this.dt, this.ratio);
     }
 
-    startLoop () {
+    startLoop() {
         this.scene.executeWhenReady(() => {
 
             // renders the scene 60 fps.
             this.engine.runRenderLoop(() => {
-
-                // this.updateDt();
 
                 if (this.controls.pressed('p')) {
                     if (this.state === 'RUNNING') {
@@ -116,18 +109,18 @@ export default class Game {
 
     /* ---------------- debug ---------------- */
 
-    showBoundingBox () {
+    showBoundingBox() {
         this.showBoundingBoxEnable = !this.showBoundingBoxEnable;
         this.scene.meshes.forEach(m => {
             m.showBoundingBox = this.showBoundingBoxEnable
         });
     }
 
-    stop () {
+    stop() {
         this.engine.stopRenderLoop();
     }
 
-    restart () {
+    restart() {
         this.startLoop();
     }
     /* ---------------- debug ---------------- */

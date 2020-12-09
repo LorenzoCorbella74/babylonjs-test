@@ -7,6 +7,4 @@ export default class GameObject extends BABYLON.Mesh {
     this.scene = game.scene;
   }
 
-  
-
 }

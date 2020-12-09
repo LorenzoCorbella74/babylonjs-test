@@ -45,8 +45,9 @@ export default class Player extends GameObject {
         this.game.scene.activeCamera = this.camera;
         this.isThirdPersonCamera = false;
 
-        this.weaponsInventory = new WeaponsInventory();
+        this.weaponsInventory = new WeaponsInventory(this);
         this.currentWeapon = this.weaponsInventory.selectedWeapon;		// arma corrente
+        this.weaponsInventory.initWeapon(this)
 
         // wj tiene conto se stiamo sul ground principale
         this.camera.playerBox.onCollide = (colMesh) => {
@@ -61,6 +62,24 @@ export default class Player extends GameObject {
                 }
             }
         }
+
+        this.metadata = {
+            hp: 100,
+            ap: 0,
+            get alive() {
+                return this.metadata.hp > 0
+            },
+            setDamage(num) {
+                if (this.metadata.ap > 0) {
+                    this.metadata.ap -= num;
+                }
+                if (this.metadata.ap < 0) {
+                    this.metadata.hp += this.metadata.ap
+                }
+                this.metadata.hp -= num
+            }
+        };
+
     }
 
     switchCamera() {
@@ -201,10 +220,11 @@ export default class Player extends GameObject {
         this.camera.playerBox.moveWithCollisions(new BABYLON.Vector3(0, (-0.5) * relativeSpeed, 0));
 
         // FIRE
-        if (this.game.controls.mouseLeft) {
+        if (this.game.scene.alreadyLocked && this.game.controls.mouseLeft) {
             console.log('mouse left!');
+            this.weaponsInventory.fire()
         }
-        if (this.game.controls.mouseRight) {
+        if (this.game.scene.alreadyLocked && this.game.controls.mouseRight) {
             console.log('mouse right!');
         }
     }

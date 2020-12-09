@@ -1,7 +1,11 @@
+import * as BABYLON from 'babylonjs';
+
 export class WeaponsInventory {
 
-    constructor() {
-        this.weapon = 0;
+    constructor(player) {
+        this.player = player;
+
+        this.weapon = 4;
         this.weapons = [
             {
                 name: 'Rifle',
@@ -91,13 +95,13 @@ export class WeaponsInventory {
         this.selectedWeapon = this.weapons[this.weapon];
     }
 
-    setWeapon (index) {
+    setWeapon(index) {
         this.selectedWeapon = this.weapons[index];
     }
 
     // ora si prende l'arma + "in alto"
     // TODO: si prende in base a probabilità pesata delle preferenze del bot e alla disponibilità
-    getBest () {
+    getBest() {
         for (let i = this.weapons.length - 1; i >= 0; i--) {
             let item = this.weapons[i];
             if (item && item.available && item.shotNumber > 0) {
@@ -109,7 +113,7 @@ export class WeaponsInventory {
 
     // dopo un respawn le munizioni vengono azzerate 
     // e rimossa la disponibilità delle armi
-    resetWeapons () {
+    resetWeapons() {
         for (let i = this.weapons.length - 1; i >= 0; i--) {
             let item = this.weapons[i];
             item.shotNumber = 0;
@@ -120,7 +124,7 @@ export class WeaponsInventory {
     }
 
     // quando si colleziona un'arma e una cassa di munizioni
-    setAvailabilityAndNumOfBullets (name, numOfBullet) {
+    setAvailabilityAndNumOfBullets(name, numOfBullet) {
         for (let i = this.weapons.length - 1; i >= 0; i--) {
             let item = this.weapons[i];
             if (item.name == name) {
@@ -130,13 +134,34 @@ export class WeaponsInventory {
         }
     }
 
-    setNumOfBullets (name, numOfBullet) {
+    setNumOfBullets(name, numOfBullet) {
         for (let i = this.weapons.length - 1; i >= 0; i--) {
             let item = this.weapons[i];
             if (item.name == name) {
                 item.shotNumber += numOfBullet;
             }
         }
+    }
+
+    initWeapon(Player) {
+        let weapon = BABYLON.MeshBuilder.CreateBox('rocketLauncher',
+            { height: .25, width: 0.5, depth: 1 },
+            Player.game.scene);
+
+        // On l'associe à la caméra pour qu'il bouge de la même facon
+        weapon.parent = Player.camera;
+        weapon.position = new BABYLON.Vector3(0.5, -0.8, 2);
+
+        // Ajoutons un material Rouge pour le rendre plus visible
+        var materialWeapon = new BABYLON.StandardMaterial('rocketLauncherMat', Player.game.scene);
+        materialWeapon.diffuseColor = new BABYLON.Color3(1, 0, 0);
+        weapon.material = materialWeapon;
+
+        return weapon
+    }
+
+    fire() {
+        // console.log('fire');
     }
 
 }

@@ -7,7 +7,7 @@ export default class PowerUp {
     this.list = []
   }
 
-  create () {
+  create() {
     const sphereOpts = { segments: 16, diameter: 1.25 }
     const theOne = BABYLON.MeshBuilder.CreateSphere("sphere", sphereOpts, this.game.scene);
     theOne.position = new BABYLON.Vector3(5, 0, 0);
@@ -20,6 +20,7 @@ export default class PowerUp {
     material.diffuseColor = new BABYLON.Color3(0.5, 0.75, 1);
     material.wireframe = false;
 
+    // particles
     theOne.particleSystem = new BABYLON.ParticleSystem("particles", 2000);
     theOne.particleSystem.particleTexture = new BABYLON.Texture(`${this.game.images.png['flare']}`);
     // Position where the particles are emitted from
@@ -64,7 +65,7 @@ export default class PowerUp {
     this.list.push(theOne);
   }
 
-  restart (entity) {
+  restart(entity) {
     entity.setEnabled(true)
     entity.material.alpha = 0;
     entity.metadata.visible = true;
@@ -73,13 +74,13 @@ export default class PowerUp {
     }, 1000) // TODO: costante?
   }
 
-  update (ratio) {
+  update(ratio) {
     for (let i = this.list.length - 1; i >= 0; i--) {
       var powerup = this.list[i];
 
       if (powerup.material.alpha < 1) {
         powerup.material.alpha += 0.0125 / ratio; // TODO: costante?
-      } 
+      }
       powerup.position.y = Math.cos(powerup.metadata.animationStep) * 0.5 + 1.5;
       powerup.rotation.y = Math.sin(powerup.metadata.animationStep) * 0.5
       powerup.metadata.animationStep += 0.08 / ratio;
