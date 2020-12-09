@@ -56,7 +56,8 @@ export default class Game {
 
         createMap(this);
 
-        this.powerUp = new PowerUp(this);
+        this.powerUpList = new PowerUp(this);
+        this.powerUpList.create();
 
         this.gui = createDatGUI(this); // FIXME: Add DAT GUI after adding model
 
@@ -101,7 +102,7 @@ export default class Game {
                 // this.controls.debug();
 
                 this.player.update(this.ratio);
-                this.powerUp.update(this.ratio);
+                this.powerUpList.update(this.ratio);
 
                 if (this.state !== 'PAUSED') {
                     this.scene.render();
