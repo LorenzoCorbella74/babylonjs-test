@@ -1,7 +1,8 @@
 import "./styles.scss";
 
 // loading assets https://stackoverflow.com/a/59426395
-import images from './assets/textures/*.bmp';
+import bmp from './assets/textures/*.bmp';
+import png from './assets/textures/*.png';
 
 import Game from './game.js'
 
@@ -9,7 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const canvas = initCanvas()
     const game = new Game(canvas)
     
-    game.images = images;
+    game.images = {bmp, png};
     game
         .createScene()
         .startLoop()

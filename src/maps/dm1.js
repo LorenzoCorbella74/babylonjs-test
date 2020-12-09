@@ -10,7 +10,7 @@ export function createMap(game) {
     // Create a grid material
     // var gridMaterial = new GridMaterial("grid", game.scene);
     const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", game.scene);
-    groundMaterial.diffuseTexture = new BABYLON.Texture(`${game.images['tile1']}`, game.scene);
+    groundMaterial.diffuseTexture = new BABYLON.Texture(`${game.images.bmp['tile1']}`, game.scene);
     groundMaterial.diffuseTexture.uScale = 10;
     groundMaterial.diffuseTexture.vScale = 5;
     // groundMaterial.diffuseColor = new BABYLON.Color3(0.25, 0.4, 0.6);
@@ -36,7 +36,7 @@ export function createMap(game) {
     ground2.showBoundingBox = game.showBoundingBox; 
 
     const wallMaterial = new BABYLON.StandardMaterial("texture_rampa", game.scene); 
-    wallMaterial.diffuseTexture = new BABYLON.Texture(`${game.images['wall']}`, game.scene);
+    wallMaterial.diffuseTexture = new BABYLON.Texture(`${game.images.bmp['wall']}`, game.scene);
     wallMaterial.diffuseTexture.uScale = 2;
     wallMaterial.diffuseTexture.vScale = 10;
     // wallMaterial.diffuseColor = new BABYLON.Color3(0.75, 0.75, 0.75);

@@ -20,6 +20,12 @@ export default class PowerUp {
     material.diffuseColor = new BABYLON.Color3(0.5, 0.75, 1);
     material.wireframe = false;
 
+    theOne.particleSystem = new BABYLON.ParticleSystem("particles", 2000);
+    theOne.particleSystem.particleTexture = new BABYLON.Texture(`${this.game.images.png['flare']}`);
+    // Position where the particles are emitted from
+    theOne.particleSystem.emitter = theOne;
+    theOne.particleSystem.start();
+
     theOne.material = material;
 
     theOne.checkCollisions = true;
@@ -38,6 +44,7 @@ export default class PowerUp {
           // create particles
           theOne.setEnabled(false)
           theOne.metadata.visible = false;
+          // theOne.particleSystem.stop();
           setTimeout(() => {
             this.restart(theOne)
           }, 10000) // TODO: costante?
@@ -61,6 +68,9 @@ export default class PowerUp {
     entity.setEnabled(true)
     entity.material.alpha = 0;
     entity.metadata.visible = true;
+    setTimeout(() => {
+      entity.particleSystem.start();
+    }, 1000) // TODO: costante?
   }
 
   update (ratio) {
